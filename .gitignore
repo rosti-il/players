@@ -1,0 +1,8 @@
+# Maven related
+target/
+.mvn/wrapper/*.jar
+!**/src/**
+
+# IntelliJ related
+.idea/
+*.iml
