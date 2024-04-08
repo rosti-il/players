@@ -20,7 +20,6 @@ import java.util.stream.StreamSupport;
 import static com.example.players.Helper.EASY_RANDOM;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -38,7 +37,6 @@ public class PlayerServiceImplTest {
 
     @BeforeEach
     void beforeEach() {
-        reset(playerRepository);
         when(playerRepository.findAll()).thenReturn(List.of(playerOne, playerTwo));
         when(playerRepository.findById(playerOne.getId())).thenReturn(Optional.of(playerOne));
         when(playerRepository.findById(playerTwo.getId())).thenReturn(Optional.of(playerTwo));

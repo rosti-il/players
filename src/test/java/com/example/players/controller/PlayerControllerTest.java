@@ -39,8 +39,7 @@ class PlayerControllerTest {
     private final PlayerDTO playerTwo = new PlayerDTO(EASY_RANDOM.nextObject(Player.class));
 
     @BeforeEach
-    void setUp() {
-        reset(playerService);
+    void beforeEach() {
         when(playerService.getPlayers()).thenReturn(Arrays.asList(playerOne, playerTwo));
         when(playerService.getPlayer(playerOne.getId())).thenReturn(Optional.of(playerOne));
         when(playerService.getPlayer(playerTwo.getId())).thenReturn(Optional.of(playerTwo));

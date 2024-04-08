@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.stream.StreamSupport;
+import java.util.ArrayList;
 
 @Component
 public class DataInitializer implements BeanPostProcessor {
@@ -36,14 +36,27 @@ public class DataInitializer implements BeanPostProcessor {
             var mapper = new CsvMapper();
             var schema = CsvSchema.emptySchema().withHeader();
 
+            // LinkedList adds faster but when failing we're in no hurry and memory is more important
+            var duplications = new ArrayList<Long>();
+
             try (InputStream inputStream = new FileInputStream(csvPlayersFile)) {
-                MappingIterator<Player> it = mapper.readerFor(Player.class)
+                MappingIterator<Player> playerMappingIterator = mapper.readerFor(Player.class)
                         .with(schema)
                         .readValues(inputStream);
-                StreamSupport.stream(((Iterable<Player>) () -> it).spliterator(), false)
-                        .forEach(playerRepository::save);
+
+                for (var player : (Iterable<Player>) () -> playerMappingIterator) {
+                    if (playerRepository.existsById(player.getId())) {
+                        duplications.add(player.getId());
+                    } else {
+                        playerRepository.save(player);
+                    }
+                }
             } catch (IOException e) {
                 throw new BeanInitializationException(e.getMessage(), e);
+            }
+
+            if (!duplications.isEmpty()) {
+                throw new BeanInitializationException("Invalid initial data CSV file. Duplication(s) of player IDs found: " + duplications);
             }
         }
         return bean;
