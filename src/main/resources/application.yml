@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: players
+  jpa:
+    database: hsql
+    open-in-view: false
+players:
+  csv-file: data/players.csv
