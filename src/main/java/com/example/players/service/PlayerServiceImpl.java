@@ -2,10 +2,12 @@ package com.example.players.service;
 
 import com.example.players.dto.PlayerDTO;
 import com.example.players.repository.PlayerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 @Service
 public class PlayerServiceImpl implements PlayerService {
@@ -17,10 +19,13 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public Iterable<PlayerDTO> getPlayers() {
-        return () -> StreamSupport.stream(playerRepository.findAll().spliterator(), false)
+    public Page<PlayerDTO> getPlayers(Pageable pageable) {
+        var playersPage = playerRepository.findAll(pageable);
+        var playersList = playersPage
+                .stream()
                 .map(PlayerDTO::new)
-                .iterator();
+                .toList();
+        return new PageImpl<>(playersList, pageable, playersPage.getTotalElements());
     }
 
     @Override

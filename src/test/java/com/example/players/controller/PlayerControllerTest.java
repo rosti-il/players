@@ -9,9 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,24 +42,34 @@ class PlayerControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        when(playerService.getPlayers()).thenReturn(Arrays.asList(playerOne, playerTwo));
+        when(playerService.getPlayers(PageRequest.of(0, 1))).thenReturn(new PageImpl<>(List.of(playerOne)));
+        when(playerService.getPlayers(PageRequest.of(1, 1))).thenReturn(new PageImpl<>(List.of(playerTwo)));
+        // TODO find the way to change this default magic number 2000 to Integer.MAX_VALUE for consistency
+        when(playerService.getPlayers(PageRequest.ofSize(2000))).thenReturn(new PageImpl<>(List.of(playerOne, playerTwo)));
         when(playerService.getPlayer(playerOne.getId())).thenReturn(Optional.of(playerOne));
         when(playerService.getPlayer(playerTwo.getId())).thenReturn(Optional.of(playerTwo));
     }
 
     @Test
     void testPlayers() throws Exception {
-        PlayerDTO playerOne = new PlayerDTO(EASY_RANDOM.nextObject(Player.class));
-        PlayerDTO playerTwo = new PlayerDTO(EASY_RANDOM.nextObject(Player.class));
-        when(playerService.getPlayers()).thenReturn(Arrays.asList(playerOne, playerTwo));
-
         mockMvc.perform(get("/api/players"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0]", is(objectMapper.convertValue(playerOne, Map.class))))
-                .andExpect(jsonPath("$[1]", is(objectMapper.convertValue(playerTwo, Map.class))));
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0]", is(objectMapper.convertValue(playerOne, Map.class))))
+                .andExpect(jsonPath("$.content[1]", is(objectMapper.convertValue(playerTwo, Map.class))));
 
-        verify(playerService, times(1)).getPlayers();
+        verify(playerService, times(1)).getPlayers(any());
+    }
+
+    @Test
+    void testPlayersPagination() throws Exception {
+        mockMvc.perform(get("/api/players?page=1&size=1"))
+//                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0]", is(objectMapper.convertValue(playerTwo, Map.class))));
+
+        verify(playerService, times(1)).getPlayers(any());
     }
 
     @Test

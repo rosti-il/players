@@ -2,6 +2,9 @@ package com.example.players.controller;
 
 import com.example.players.dto.PlayerDTO;
 import com.example.players.service.PlayerService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +21,8 @@ public class PlayerController {
     }
 
     @GetMapping("players")
-    public Iterable<PlayerDTO> players() {
-        return playerService.getPlayers();
+    public Page<PlayerDTO> players(@PageableDefault(size = Integer.MAX_VALUE) Pageable pageable) {
+        return playerService.getPlayers(pageable);
     }
 
     @GetMapping("players/{playerID}")

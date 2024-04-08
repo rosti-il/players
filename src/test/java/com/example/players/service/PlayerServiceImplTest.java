@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,7 @@ import java.util.stream.StreamSupport;
 import static com.example.players.Helper.EASY_RANDOM;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -37,14 +40,14 @@ public class PlayerServiceImplTest {
 
     @BeforeEach
     void beforeEach() {
-        when(playerRepository.findAll()).thenReturn(List.of(playerOne, playerTwo));
+        when(playerRepository.findAll(any())).thenReturn(new PageImpl<>(List.of(playerOne, playerTwo)));
         when(playerRepository.findById(playerOne.getId())).thenReturn(Optional.of(playerOne));
         when(playerRepository.findById(playerTwo.getId())).thenReturn(Optional.of(playerTwo));
     }
 
     @Test
     void getPlayersShouldReturnAllPlayers() {
-        Iterable<PlayerDTO> players = playerService.getPlayers();
+        Iterable<PlayerDTO> players = playerService.getPlayers(PageRequest.ofSize(Integer.MAX_VALUE));
         assertEquals(Stream.of(playerOne, playerTwo).map(PlayerDTO::new).toList(), StreamSupport.stream(players.spliterator(), false).toList());
     }
 
