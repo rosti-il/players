@@ -75,6 +75,11 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.2.5</version>
                 </plugin>
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>0.44.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -100,6 +105,34 @@
                     <!--suppress UnresolvedMavenProperty -->
                     <argLine>@{argLine} -javaagent:${net.bytebuddy:byte-buddy-agent:jar} -Xshare:off</argLine>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>${project.artifactId}:${project.version}</name>
+                        </image>
+                    </images>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>tag</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
