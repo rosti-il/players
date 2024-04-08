@@ -2,6 +2,8 @@ package com.example.players.dto;
 
 import com.example.players.model.Player;
 
+import java.util.Objects;
+
 public class PlayerDTO {
     private final Long id;
     private final String name;
@@ -35,5 +37,29 @@ public class PlayerDTO {
 
     public String getCountry() {
         return country;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PlayerDTO playerDTO = (PlayerDTO) o;
+        return Objects.equals(id, playerDTO.id) && Objects.equals(name, playerDTO.name) && Objects.equals(age, playerDTO.age) && Objects.equals(gender, playerDTO.gender) && Objects.equals(country, playerDTO.country);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, age, gender, country);
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", gender='" + gender + '\'' +
+                ", country='" + country + '\'' +
+                '}';
     }
 }

@@ -3,6 +3,8 @@ package com.example.players.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import java.util.Objects;
+
 @Entity
 public class Player {
     @Id
@@ -50,5 +52,29 @@ public class Player {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return Objects.equals(id, player.id) && Objects.equals(name, player.name) && Objects.equals(age, player.age) && Objects.equals(gender, player.gender) && Objects.equals(country, player.country);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, age, gender, country);
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", gender='" + gender + '\'' +
+                ", country='" + country + '\'' +
+                '}';
     }
 }

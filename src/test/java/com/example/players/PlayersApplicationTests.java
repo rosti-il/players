@@ -1,11 +1,10 @@
 package com.example.players;
 
+import com.example.players.annotation.SpringBootTestWithTestProfile;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@SpringBootTestWithTestProfile
 class PlayersApplicationTests {
-
 	@Test
 	void contextLoads() {
 	}
