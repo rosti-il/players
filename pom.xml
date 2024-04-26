@@ -13,7 +13,7 @@
     <groupId>com.example</groupId>
     <artifactId>players</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <description>Software Engineer Home Assignment (Intuit)</description>
+    <description>Software Engineer Home Assignment</description>
 
     <properties>
         <java.version>21</java.version>
